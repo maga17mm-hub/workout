@@ -2,74 +2,141 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+
+<!-- адаптивность как у настоящего приложения -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PWA Тренировки</title>
+
+<title>FitPro Lite</title>
+
+<!-- подключаем встроенный manifest -->
+<link rel="manifest" href="#manifest">
 
 <style>
-  body { margin:0; font-family:Arial; background:#111; color:#fff; }
-  h1 { text-align:center; padding:20px; }
-  .card {
-    margin:10px; padding:20px; border-radius:10px;
-    background:#222; border:1px solid #333;
-  }
-  button {
-    background:#0af; border:none; padding:10px 15px;
-    border-radius:8px; cursor:pointer;
-  }
+    /* ======= ПРОФЕССИОНАЛЬНЫЙ СТИЛЬ ======= */
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #111; /* тёмная тема — тренд фитнес-приложений */
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* верхняя панель */
+    header {
+        background: linear-gradient(90deg, #ff3e00, #ff7a00);
+        padding: 20px;
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    /* контейнер карточек */
+    .workouts {
+        padding: 20px;
+        display: grid;
+        gap: 15px;
+    }
+
+    /* карточка тренировки */
+    .card {
+        background: #1c1c1c;
+        padding: 20px;
+        border-radius: 14px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        transform: scale(1.03);
+        background: #242424;
+    }
+
+    .title {
+        font-size: 20px;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .desc {
+        opacity: 0.7;
+        font-size: 14px;
+    }
+
+    /* кнопка старта */
+    .btn {
+        margin-top: 15px;
+        display: inline-block;
+        background: #ff3e00;
+        padding: 10px 18px;
+        border-radius: 10px;
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+    }
 </style>
 
 </head>
 <body>
 
-<h1>Тренировка</h1>
+<header>FitPro Training</header>
 
-<div class="card">
-  <p>Простое PWA приложение для тренировок</p>
-  <button onclick="start()">Начать</button>
-  <p id="timer">00:30</p>
+<div class="workouts">
+
+    <!-- ======= КАРТОЧКА ТРЕНИРОВКИ ======= -->
+    <div class="card">
+        <div class="title">Грудь + Трицепс</div>
+        <div class="desc">30–40 мин • средняя сложность</div>
+        <a class="btn" href="#">Начать</a>
+    </div>
+
+    <!-- ======= КАРТОЧКА ТРЕНИРОВКИ ======= -->
+    <div class="card">
+        <div class="title">Ноги</div>
+        <div class="desc">45 мин • высокая сложность</div>
+        <a class="btn" href="#">Начать</a>
+    </div>
+
+    <!-- ======= КАРТОЧКА ТРЕНИРОВКИ ======= -->
+    <div class="card">
+        <div class="title">Кардио</div>
+        <div class="desc">20 мин • лёгкая нагрузка</div>
+        <a class="btn" href="#">Начать</a>
+    </div>
+
 </div>
 
-<script>
-/* ---- Минимальный таймер ---- */
-let sec = 30, t;
-function start(){
-  if(t) return;
-  t = setInterval(()=>{
-    sec--;
-    document.getElementById("timer").textContent =
-      "00:" + String(sec).padStart(2,"0");
-    if(sec <= 0){ clearInterval(t); alert("Готово!"); }
-  },1000);
-}
-
-/* ---- Создаём manifest прямо в HTML ---- */
-const manifest = {
-  "name": "PWA Тренировки",
-  "short_name": "Тренировки",
+<!-- ===============================================
+     ВСТРОЕННЫЙ MANIFEST ДЛЯ PWA
+     Это позволяет телефону "понять", что сайт — как приложение
+================================================ -->
+<script id="manifest" type="application/json">
+{
+  "name": "FitPro Lite",
+  "short_name": "FitPro",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#111",
-  "theme_color": "#111",
+  "theme_color": "#ff3e00",
   "icons": []
-};
-const blob = new Blob([JSON.stringify(manifest)], {type:"application/json"});
-const manifestURL = URL.createObjectURL(blob);
-const link = document.createElement("link");
-link.rel = "manifest";
-link.href = manifestURL;
-document.head.appendChild(link);
+}
+</script>
 
-/* ---- Создаём service worker прямо отсюда ---- */
-const swCode = `
-  self.addEventListener('fetch', e => {
-    e.respondWith(fetch(e.request).catch(()=> new Response('Оффлайн')));
-  });
-`;
-const swBlob = new Blob([swCode], {type:"text/javascript"});
-const swURL = URL.createObjectURL(swBlob);
-
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register(swURL);
+<!-- ===============================================
+     ВСТРОЕННЫЙ SERVICE WORKER (минимальный)
+     Делает приложение офлайн и устанавливаемым
+================================================ -->
+<script>
+if ("serviceWorker" in navigator) {
+    // регистрируем сервис-воркер из этого же файла
+    const swCode = `
+        self.addEventListener('install', e => self.skipWaiting());
+        self.addEventListener('fetch', e => {});
+    `;
+    const blob = new Blob([swCode], {type: "text/javascript"});
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl);
 }
 </script>
 
