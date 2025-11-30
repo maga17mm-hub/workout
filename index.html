@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PWA Тренировки</title>
+
+<style>
+  body { margin:0; font-family:Arial; background:#111; color:#fff; }
+  h1 { text-align:center; padding:20px; }
+  .card {
+    margin:10px; padding:20px; border-radius:10px;
+    background:#222; border:1px solid #333;
+  }
+  button {
+    background:#0af; border:none; padding:10px 15px;
+    border-radius:8px; cursor:pointer;
+  }
+</style>
+
+</head>
+<body>
+
+<h1>Тренировка</h1>
+
+<div class="card">
+  <p>Простое PWA приложение для тренировок</p>
+  <button onclick="start()">Начать</button>
+  <p id="timer">00:30</p>
+</div>
+
+<script>
+/* ---- Минимальный таймер ---- */
+let sec = 30, t;
+function start(){
+  if(t) return;
+  t = setInterval(()=>{
+    sec--;
+    document.getElementById("timer").textContent =
+      "00:" + String(sec).padStart(2,"0");
+    if(sec <= 0){ clearInterval(t); alert("Готово!"); }
+  },1000);
+}
+
+/* ---- Создаём manifest прямо в HTML ---- */
+const manifest = {
+  "name": "PWA Тренировки",
+  "short_name": "Тренировки",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#111",
+  "theme_color": "#111",
+  "icons": []
+};
+const blob = new Blob([JSON.stringify(manifest)], {type:"application/json"});
+const manifestURL = URL.createObjectURL(blob);
+const link = document.createElement("link");
+link.rel = "manifest";
+link.href = manifestURL;
+document.head.appendChild(link);
+
+/* ---- Создаём service worker прямо отсюда ---- */
+const swCode = `
+  self.addEventListener('fetch', e => {
+    e.respondWith(fetch(e.request).catch(()=> new Response('Оффлайн')));
+  });
+`;
+const swBlob = new Blob([swCode], {type:"text/javascript"});
+const swURL = URL.createObjectURL(swBlob);
+
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register(swURL);
+}
+</script>
+
+</body>
+</html>
