@@ -16,20 +16,10 @@
 
     body {
         font-family: Arial, sans-serif;
-        background: #111; /* тёмная тема — тренд фитнес-приложений */
+        background: #FFFFFF; /* тёмная тема — тренд фитнес-приложений */
         color: #0A3491;
         margin: 0;
         padding: 0;
-    }
-
-    /* верхняя панель */
-    header {
-        background: linear-gradient(90deg, #ff3e00, #ff7a00);
-        padding: 20px;
-        text-align: center;
-        font-size: 24px;
-        font-weight: bold;
-        letter-spacing: 1px;
     }
 
     /* контейнер карточек */
@@ -75,8 +65,31 @@
         text-decoration: none;
         font-weight: bold;
     }
+
+/*вкладка снизу лева*/
+    .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+    
 </style>
 
+<nav class="bottom-nav">
+       <ul class="nav-tabs">
+            <li>
+                <a href="#" class="nav-tab active">
+                    <span class="tab-icon">🏠
+</span>
+                    <span>Главная</span>
+                </a>
+            </li>
+            <li>
+    
 </head>
 <body>
 
